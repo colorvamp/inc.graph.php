@@ -109,3 +109,39 @@ echo $svg;
 ![No indicator Bar Graph](http://i.imgur.com/GSKfqFg.png "No indicator Bar Graph")
 
 
+
+Header and graph background
+---------------------------
+
+You can change the graph background through **graph.background**. The header background
+will default to this value. Alternatively you can pass **header.even.background** and 
+**header.odd.background** to create something like the following:
+
+
+```
+include_once('inc.graph.php');
+$svg = graph_bars(array(
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>12,
+	'bar.indicator'=>true,
+	'graph.background'=>'ccc',
+	'graph.gradient.from'=>'8cc277',
+	'graph.gradient.to'=>'6fa85b',
+	'graph'=>array(
+		'prim'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'header.even.background'=>'eee',
+	'header.odd.background'=>'aaa',
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	)
+));
+echo $svg;
+```
+
+![Header and graph background Bar Graph](http://i.imgur.com/ldmgH4A.png "Header and graph background Bar Graph")
+
+
+
+

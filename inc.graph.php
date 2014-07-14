@@ -13,6 +13,7 @@
 		$data['graph.width'] = ($data['items.count']*$data['cell.width'])+$data['items.count']+1;
 		if(isset($data['graph.gradient.from']) && isset($data['graph.gradient.to'])){$data['graph.gradient'] = graph_gradient($data['graph.gradient.from'],$data['graph.gradient.to'],$data['items.count']);}
 		if(!isset($data['graph.gradient'])){$data['graph.gradient'] = array_fill(0,$data['items.count'],'f00');}
+		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
 
 		if(!isset($data['graph.min'])){
 			$data['graph.min'] = false;
@@ -32,7 +33,7 @@
 
 		$svg .= '<g class="graph">'.PHP_EOL;
 		$left = 1+$data['graph.legend.width'];for($i = 0;$i < $data['items.count'];$i++,$left += $data['cell.width']+1){
-			$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['graph.height']-2).'" x="'.$left.'" y="1" style="fill:#fff;" />'.PHP_EOL;
+			$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['graph.height']-2).'" x="'.$left.'" y="1" style="fill:#'.$data['graph.background'].';" />'.PHP_EOL;
 		}
 		if($data['graph.legend.width']){
 			$svg .= graph_fragment_legend($data);
@@ -56,13 +57,15 @@
 		$svg .= '</g>'.PHP_EOL;
 
 		$svg .= graph_fragment_header($data);
-		$data['header.top'] = ($data['graph.height']-$data['cell.marginy']+2);
+		if(!isset($data['header.height'])){$data['header.height'] = 22;}
+		$data['header.top'] = ($data['graph.height']-$data['header.height']);
 		$svg .= graph_fragment_header($data);
 		$svg .= '</svg>';
 
 		return $svg;
 	}
 	function graph_fragment_legend(&$data = array()){
+		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
 		if(!isset($data['graph.legend.count'])){
 			//FIXME: realmente se puede basar en $data['graph.height']
 			$data['graph.legend.count'] = 2;
@@ -74,7 +77,7 @@
 		$incr = $height/($data['graph.max']-$data['graph.min']);
 
 		$svg = '<g class="legend">'.PHP_EOL;
-		$svg .= '<rect x="1" y="1" width="'.($data['graph.legend.width']-1).'" height="'.($data['graph.height']-2).'" style="fill:white;" />';
+		$svg .= '<rect x="1" y="1" width="'.($data['graph.legend.width']-1).'" height="'.($data['graph.height']-2).'" style="fill:#'.$data['graph.background'].';" />';
 
 		$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($data['cell.marginy']+1).'" width="'.($data['graph.width']).'" height="1" style="fill:'.$lineColor.';" />';
 		$svg .= '<text x="'.($data['graph.legend.width']-2).'" y="'.($data['cell.marginy']+5).'" text-anchor="end" style="fill:#444;font-size:10px;">'.round($data['graph.max'],2).'</text>';
@@ -95,12 +98,21 @@
 		if(!isset($data['cell.width'])){$data['cell.width'] = 30;}
 		if(!isset($data['header.height'])){$data['header.height'] = 22;}
 		if(!isset($data['header.top'])){$data['header.top'] = 0;}
+		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
 		if(!isset($data['graph.legend.width'])){$data['graph.legend.width'] = 0;}
+		$data['header'] = array_values($data['header']);
+		$getBackground = function($k) use (&$data){
+			$isEven = ($k%2);/* $k+1 because keys start in 0 */
+			if($isEven && isset($data['header.even.background'])){return $data['header.even.background'];}
+			if(!$isEven && isset($data['header.odd.background'])){return $data['header.odd.background'];}
+			return $data['graph.background'];
+		};
 
 		$svg = '<g class="header">'.PHP_EOL;
 		$svg .= '<rect x="'.$data['graph.legend.width'].'" y="'.$data['header.top'].'" width="'.($data['graph.width']).'" height="'.$data['header.height'].'" style="fill:#aaa;" />';
-		$left = 1+$data['graph.legend.width'];foreach($data['header'] as $label){
-			$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['header.height']-2).'" x="'.$left.'" y="'.(1+$data['header.top']).'" style="fill:#fff;" />'.PHP_EOL;
+		$left = 1+$data['graph.legend.width'];foreach($data['header'] as $k=>$label){
+			$bg = $getBackground($k);
+			$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['header.height']-2).'" x="'.$left.'" y="'.(1+$data['header.top']).'" style="fill:#'.$bg.';" />'.PHP_EOL;
 			$svg .= '<text x="'.($left+$data['cell.width.half']).'" y="'.($data['header.height']/2+(10/2/* font-size */)-2+$data['header.top']).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.$label.'</text>'.PHP_EOL;
 			$left += $data['cell.width']+1;
 		}
