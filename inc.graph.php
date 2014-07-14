@@ -47,7 +47,7 @@
 					if($data['bar.indicator']){
 						$m = 4;
 						$svg .= '<path d="M'.($left+$m).' '.($t+$h).' l'.($data['cell.width.half']-$data['cell.marginx']-$m).' 6 l'.($data['cell.width.half']-$data['cell.marginx']-$m).' -6 Z" style="fill:#'.$data['graph.gradient'][$k].';" />'.PHP_EOL;
-						$svg .= '<text x="'.($left+$data['cell.width.half']-2).'" y="'.($t+$h+16).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.round($v,2).'</text>'.PHP_EOL;
+						$svg .= '<text x="'.($left+$data['cell.width.half']-$data['cell.marginx']).'" y="'.($t+$h+16).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.round($v,2).'</text>'.PHP_EOL;
 					}
 				}
 				$left += $data['cell.width']+1;
