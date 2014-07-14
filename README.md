@@ -79,3 +79,33 @@ echo $svg;
 ```
 
 ![Thin Bar Graph](http://i.imgur.com/q9bjGZ8.png "Thin Bar Graph")
+
+
+
+No indicator and flat bars
+--------------------------
+
+If the key **bar.indicator** is not supplied the graph will not show any indicator.
+The key **cell.marginy** controls the column top and bottom margins.
+
+```
+include_once('inc.graph.php');
+$svg = graph_bars(array(
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>14,
+	'graph.gradient.from'=>'8cc277',
+	'graph.gradient.to'=>'6fa85b',
+	'graph'=>array(
+		'prim'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	)
+));
+echo $svg;
+```
+
+![No indicator Bar Graph](http://i.imgur.com/GSKfqFg.png "No indicator Bar Graph")
+
+
