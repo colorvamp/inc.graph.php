@@ -143,5 +143,40 @@ echo $svg;
 ![Header and graph background Bar Graph](http://i.imgur.com/ldmgH4A.png "Header and graph background Bar Graph")
 
 
+Legend line color, legend width and indicator count
+---------------------------------------------------
+
+Change the indicator cuts count setting the key **graph.legend.count**, in the next example 
+you can see 4 cuts. The key **graph.legend.width** controls the legend width as noted in the
+example. Finally, the color of the horizontal markers matching the rule is set by the **graph.legend.line.color** 
+key.
+
+```
+include_once('inc.graph.php');
+$svg = graph_bars(array(
+	'graph.height'=>240,
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>12,
+	'bar.indicator'=>true,
+	'graph.background'=>'ccc',
+	'graph.gradient.from'=>'8cc277',
+	'graph.gradient.to'=>'6fa85b',
+	'graph'=>array(
+		'prim'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'header.even.background'=>'eee',
+	'header.odd.background'=>'aaa',
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	),
+	'graph.legend.width'=>100,
+	'graph.legend.count'=>4,
+	'graph.legend.line.color'=>'aaa',
+));
+echo $svg;
+```
+
+![Legend line color, legend width and indicator count](http://i.imgur.com/Jz9mOFN.png "Legend line color, legend width and indicator count")
 
 
