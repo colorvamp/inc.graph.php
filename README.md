@@ -172,11 +172,52 @@ $svg = graph_bars(array(
 	),
 	'graph.legend.width'=>100,
 	'graph.legend.count'=>4,
-	'graph.legend.line.color'=>'aaa',
+	'graph.legend.line.color'=>'aaa'
 ));
 echo $svg;
 ```
 
-![Legend line color, legend width and indicator count](http://i.imgur.com/Jz9mOFN.png "Legend line color, legend width and indicator count")
+![Legend line color, legend width and indicator count Bar Graph](http://i.imgur.com/Jz9mOFN.png "Legend line color, legend width and indicator count Bar Graph")
+
+
+Graph + table
+-------------
+
+If you want a table to follow graph, you only need to feed the key **table**
+
+```
+include_once('inc.graph.php');
+$svg = graph_bars(array(
+	'graph.height'=>240,
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>12,
+	'bar.indicator'=>true,
+	'graph.background'=>'ccc',
+	'graph.gradient.from'=>'8cc277',
+	'graph.gradient.to'=>'6fa85b',
+	'graph'=>array(
+		'first'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'header.even.background'=>'eee',
+	'header.odd.background'=>'aaa',
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	),
+	'graph.legend.width'=>100,
+	'graph.legend.count'=>4,
+	'graph.legend.line.color'=>'aaa',
+	'table'=>array(
+		'first'=>array(1,2,3,4,5,6,7,8,9,10),
+		'secnd'=>array(1,2,3,4,5,6,7,8,9,10),
+		'third'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+));
+echo $svg;
+```
+
+![Graph + table Bar Graph](http://i.imgur.com/1qkykJp.png "Graph + table Bar Graph")
+
+
 
 

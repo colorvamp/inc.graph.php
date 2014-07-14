@@ -28,7 +28,7 @@
 		$getHeight = function($h) use (&$data){return ($h-$data['graph.min'])*$data['graph.incr'];};
 		$getTop = function($h) use (&$data){return $data['graph.height']-(($h-$data['graph.min'])*$data['graph.incr'])-1-$data['cell.marginy']-$data['bar.indicator'];};
 
-		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.$data['graph.height'].'">'.PHP_EOL.
+		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.($data['graph.height']).'">'.PHP_EOL.
 		'<rect width="100%" height="100%" style="fill:#aaa;" />'.PHP_EOL;
 
 		$svg .= '<g class="graph">'.PHP_EOL;
@@ -60,8 +60,46 @@
 		if(!isset($data['header.height'])){$data['header.height'] = 22;}
 		$data['header.top'] = ($data['graph.height']-$data['header.height']);
 		$svg .= graph_fragment_header($data);
+
+		if(isset($data['table'])){
+			$svg .= graph_fragment_table($data);
+			if(isset($data['table.height'])){
+				/* Update svg's height */
+				$svg = preg_replace('/^(<svg width=.[^\"\']+. height=.)[^\"\']+(.[^>]*>)/','${1}'.($data['graph.height']+$data['table.height']).'${2}',$svg);
+			}
+		}
+
 		$svg .= '</svg>';
 
+		return $svg;
+	}
+	function graph_fragment_table(&$data = array()){
+		if(!isset($data['table.row.height'])){$data['table.row.height'] = 20;}
+		$data['table.row.count'] = count($data['table']);
+		$data['table.height'] = ($data['table.row.height']+1)*$data['table.row.count'];
+		if(!isset($data['cell.width'])){$data['cell.width'] = 30;}
+		if(!isset($data['graph.legend.width'])){$data['graph.legend.width'] = 0;}
+
+
+		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
+
+
+		$svg = '<g class="table">'.PHP_EOL;
+		$svg .= '<rect x="1" y="'.$data['graph.height'].'" width="'.($data['graph.legend.width']+$data['graph.width']).'" height="'.$data['table.height'].'" style="fill:#aaa;" />';
+		$top = $data['graph.height'];
+		foreach($data['table'] as $name=>&$row){
+			$bg = 'fff';
+			$svg .= '<rect width="'.($data['graph.legend.width']-1).'" height="'.($data['table.row.height']).'" x="1" y="'.($top).'" style="fill:#'.$bg.';" />'.PHP_EOL;
+			$svg .= '<text x="'.(2).'" y="'.($data['header.height']/2+(10/2/* font-size */)-2+$top).'" text-anchor="left" style="fill:#444;font-size:10px;">'.$name.'</text>'.PHP_EOL;			
+
+			$left = 1+$data['graph.legend.width'];foreach($row as $k=>$label){
+				$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['table.row.height']).'" x="'.$left.'" y="'.($top).'" style="fill:#'.$bg.';" />'.PHP_EOL;
+				$svg .= '<text x="'.($left+$data['cell.width.half']).'" y="'.($data['header.height']/2+(10/2/* font-size */)-2+$top).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.$label.'</text>'.PHP_EOL;
+				$left += $data['cell.width']+1;
+			}
+			$top += $data['table.row.height']+1;
+		}
+		$svg .= '</g>'.PHP_EOL;
 		return $svg;
 	}
 	function graph_fragment_legend(&$data = array()){
