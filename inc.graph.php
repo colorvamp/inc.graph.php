@@ -7,11 +7,12 @@
 		if(isset($data['header'])){$data['cell.marginy'] += isset($data['header.height']) ? $data['header.height'] : 22;}
 		if(!isset($data['graph.legend.width'])){$data['graph.legend.width'] = 30;}
 
-		if(!isset($data['bar.color'])){$data['bar.color'] = 'red';}
 		$data['bar.indicator'] = (isset($data['bar.indicator'])) ? 16 : 0;
 		$data['cell.width.half'] = $data['cell.width']/2;
 		$data['items.count'] = key($data['graph']);$data['items.count'] = count($data['graph'][$data['items.count']]);
 		$data['graph.width'] = ($data['items.count']*$data['cell.width'])+$data['items.count']+1;
+		if(isset($data['graph.gradient.from']) && isset($data['graph.gradient.to'])){$data['graph.gradient'] = graph_gradient($data['graph.gradient.from'],$data['graph.gradient.to'],$data['items.count']);}
+		if(!isset($data['graph.gradient'])){$data['graph.gradient'] = array_fill(0,$data['items.count'],'f00');}
 
 		if(!isset($data['graph.min'])){
 			$data['graph.min'] = false;
@@ -42,10 +43,10 @@
 				if(!is_array($v) && ($v = floatval($v)) ){
 					$h = $getHeight($v);
 					$t = $getTop($v);
-					$svg .= '<rect width="'.($data['cell.width']-($data['cell.marginx']*2)).'" height="'.$h.'" x="'.$left.'" y="'.$t.'" style="fill:'.$data['bar.color'].';" rx="2" ry="2"/>'.PHP_EOL;
+					$svg .= '<rect width="'.($data['cell.width']-($data['cell.marginx']*2)).'" height="'.$h.'" x="'.$left.'" y="'.$t.'" style="fill:#'.$data['graph.gradient'][$k].';" rx="2" ry="2"/>'.PHP_EOL;
 					if($data['bar.indicator']){
 						$m = 4;
-						$svg .= '<path d="M'.($left+$m).' '.($t+$h).' l'.($data['cell.width.half']-$data['cell.marginx']-$m).' 6 l'.($data['cell.width.half']-$data['cell.marginx']-$m).' -6 Z" style="fill:'.$data['bar.color'].';" />'.PHP_EOL;
+						$svg .= '<path d="M'.($left+$m).' '.($t+$h).' l'.($data['cell.width.half']-$data['cell.marginx']-$m).' 6 l'.($data['cell.width.half']-$data['cell.marginx']-$m).' -6 Z" style="fill:#'.$data['graph.gradient'][$k].';" />'.PHP_EOL;
 						$svg .= '<text x="'.($left+$data['cell.width.half']-2).'" y="'.($t+$h+16).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.round($v,2).'</text>'.PHP_EOL;
 					}
 				}
@@ -106,4 +107,39 @@
 		$svg .= '</g>'.PHP_EOL;
 		return $svg;
 	}
+	function graph_gradient($hexFrom, $hexTo, $steps){
+		$fromRGB['r'] = hexdec(substr($hexFrom, 0, 2));
+		$fromRGB['g'] = hexdec(substr($hexFrom, 2, 2));
+		$fromRGB['b'] = hexdec(substr($hexFrom, 4, 2));
+
+		$toRGB['r'] = hexdec(substr($hexTo, 0, 2));
+		$toRGB['g'] = hexdec(substr($hexTo, 2, 2));
+		$toRGB['b'] = hexdec(substr($hexTo, 4, 2));
+
+		$stepRGB['r'] = ($fromRGB['r'] - $toRGB['r']) / ($steps - 1);
+		$stepRGB['g'] = ($fromRGB['g'] - $toRGB['g']) / ($steps - 1);
+		$stepRGB['b'] = ($fromRGB['b'] - $toRGB['b']) / ($steps - 1);
+
+		$gradientColors = array();
+
+		for($i = 0; $i <= $steps; $i++){
+			$RGB['r'] = floor($fromRGB['r'] - ($stepRGB['r'] * $i));
+			$RGB['g'] = floor($fromRGB['g'] - ($stepRGB['g'] * $i));
+			$RGB['b'] = floor($fromRGB['b'] - ($stepRGB['b'] * $i));
+
+			$hexRGB['r'] = sprintf('%02x', ($RGB['r']));
+			$hexRGB['g'] = sprintf('%02x', ($RGB['g']));
+			$hexRGB['b'] = sprintf('%02x', ($RGB['b']));
+
+			$gradientColors[] = implode(NULL,$hexRGB);
+		}
+		return $gradientColors;
+	}
+     
+  /*  $Gradients = Gradient("FF5B5B", "FFCA5B", 32);
+    foreach($Gradients as $Gradient)
+    {
+            echo "<div style=\"background-color: #".$Gradient."; width: 100px; height: 25px;\"></div>";
+    }
+*/
 
