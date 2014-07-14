@@ -70,7 +70,8 @@
 			//FIXME: realmente se puede basar en $data['graph.height']
 			$data['graph.legend.count'] = 2;
 		}
-		$lineColor = '#ccc';
+		if(!isset($data['graph.legend.line.color'])){$data['graph.legend.line.color'] = 'ccc';}
+
 		$incr = ($data['graph.max']-$data['graph.min'])/($data['graph.legend.count']+1);
 		$steps = array();$top = $data['cell.marginy']+1;$i = $data['graph.legend.count']+1;while(--$i){$steps[] = $i*$incr;}
 		$height = ($data['graph.height']-($data['cell.marginy']*2)-$data['bar.indicator']-2);
@@ -79,16 +80,16 @@
 		$svg = '<g class="legend">'.PHP_EOL;
 		$svg .= '<rect x="1" y="1" width="'.($data['graph.legend.width']-1).'" height="'.($data['graph.height']-2).'" style="fill:#'.$data['graph.background'].';" />';
 
-		$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($data['cell.marginy']+1).'" width="'.($data['graph.width']).'" height="1" style="fill:'.$lineColor.';" />';
+		$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($data['cell.marginy']+1).'" width="'.($data['graph.width']).'" height="1" style="fill:#'.$data['graph.legend.line.color'].';" />';
 		$svg .= '<text x="'.($data['graph.legend.width']-2).'" y="'.($data['cell.marginy']+5).'" text-anchor="end" style="fill:#444;font-size:10px;">'.round($data['graph.max'],2).'</text>';
 
 		foreach($steps as $step){
 			$t = floor($height+$data['cell.marginy']-($step*$incr));
-			$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($t).'" width="'.($data['graph.width']).'" height="1" style="fill:'.$lineColor.';" />';
+			$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($t).'" width="'.($data['graph.width']).'" height="1" style="fill:#'.$data['graph.legend.line.color'].';" />';
 			$svg .= '<text x="'.($data['graph.legend.width']-2).'" y="'.($t+4).'" text-anchor="end" style="fill:#444;font-size:10px;">'.round($step,2).'</text>';
 		}
 
-		$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($data['graph.height']-$data['cell.marginy']-$data['bar.indicator']-2).'" width="'.($data['graph.width']).'" height="1" style="fill:'.$lineColor.';" />';
+		$svg .= '<rect x="'.($data['graph.legend.width']).'" y="'.($data['graph.height']-$data['cell.marginy']-$data['bar.indicator']-2).'" width="'.($data['graph.width']).'" height="1" style="fill:#'.$data['graph.legend.line.color'].';" />';
 		$svg .= '<text x="'.($data['graph.legend.width']-2).'" y="'.($data['graph.height']-$data['cell.marginy']-$data['bar.indicator']-2+4).'" text-anchor="end" style="fill:#444;font-size:10px;">'.round($data['graph.min'],2).'</text>';
 
 		$svg .= '</g>'.PHP_EOL;
@@ -147,11 +148,5 @@
 		}
 		return $gradientColors;
 	}
-     
-  /*  $Gradients = Gradient("FF5B5B", "FFCA5B", 32);
-    foreach($Gradients as $Gradient)
-    {
-            echo "<div style=\"background-color: #".$Gradient."; width: 100px; height: 25px;\"></div>";
-    }
-*/
+
 
