@@ -260,3 +260,49 @@ echo $svg;
 
 
 
+Line graph + table
+------------------
+
+In case you want to print a line graph, most of the keys un the past examples apply here. Now you need 
+to pass via **graph** key more than 1 array of items in order to paint diferente lines. The **table** 
+key just need to be set and will be feed with the same **graph** values. For the different colours of
+the lines you need to fill **graph.colors**, one value per line with a fixed string meaning solid colour
+or a pair of two being a gradient.
+
+
+```
+include_once('inc.graph.php');
+$svg = graph_lines(array(
+	'graph.height'=>240,
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>12,
+	'bar.indicator'=>true,
+	'graph.background'=>'ccc',
+	'graph'=>array(
+		'first'=>array(1,2,3,4,5,6,7,8,9,10),
+		'second'=>array(6,7,7,13,10,11,15,7,14,15),
+		'third'=>array(21,22,22,28,25,26,30,22,29,30)
+	),
+	'graph.colors'=>array(
+		array('8cc277','6fa85b'),
+		'00f',
+		array('2980b9','216896'),
+	),
+	'header.even.background'=>'eee',
+	'header.odd.background'=>'aaa',
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	),
+	'graph.legend.width'=>100,
+	'graph.legend.count'=>4,
+	'graph.legend.line.color'=>'aaa',
+	'table'=>true,
+	'table.even.background'=>'eee',
+	'table.odd.background'=>'ccc'
+));
+echo $svg;
+```
+
+![Line graph + table Graph](http://i.imgur.com/1zmyu6M.png "Line graph + table Graph")
+
