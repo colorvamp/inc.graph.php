@@ -218,6 +218,45 @@ echo $svg;
 
 ![Graph + table Bar Graph](http://i.imgur.com/1qkykJp.png "Graph + table Bar Graph")
 
+**Update**
+
+The table background now matchs **graph.background** if no **table.background** is set. Keys 
+**table.even.background** and **table.odd.background** now already exists.
+
+```
+include_once('inc.graph.php');
+$svg = graph_bars(array(
+	'graph.height'=>240,
+	'cell.width'=>40,
+	'cell.marginx'=>8,
+	'cell.marginy'=>12,
+	'bar.indicator'=>true,
+	'graph.background'=>'ccc',
+	'graph.gradient.from'=>'8cc277',
+	'graph.gradient.to'=>'6fa85b',
+	'graph'=>array(
+		'first'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'header.even.background'=>'eee',
+	'header.odd.background'=>'aaa',
+	'header'=>array(
+		'enr','feb','mar','abr','may','jun','jul','ago','sep','oct'
+	),
+	'graph.legend.width'=>100,
+	'graph.legend.count'=>4,
+	'graph.legend.line.color'=>'aaa',
+	'table'=>array(
+		'first'=>array(1,2,3,4,5,6,7,8,9,10),
+		'secnd'=>array(1,2,3,4,5,6,7,8,9,10),
+		'third'=>array(1,2,3,4,5,6,7,8,9,10)
+	),
+	'table.even.background'=>'eee',
+	'table.odd.background'=>'ccc'
+));
+echo $svg;
+```
+
+![Graph + table Update Bar Graph](http://i.imgur.com/SqD778E.png "Graph + table Update Bar Graph")
 
 
 

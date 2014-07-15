@@ -79,20 +79,25 @@
 		$data['table.height'] = ($data['table.row.height']+1)*$data['table.row.count'];
 		if(!isset($data['cell.width'])){$data['cell.width'] = 30;}
 		if(!isset($data['graph.legend.width'])){$data['graph.legend.width'] = 0;}
-
-
 		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
+		if(!isset($data['table.background']) && isset($data['graph.background'])){$data['table.background'] = $data['graph.background'];}
+		$getBackground = function($k) use (&$data){
+			$isEven = ($k%2);/* $k+1 because keys start in 0 */
+			if($isEven && isset($data['table.even.background'])){return $data['table.even.background'];}
+			if(!$isEven && isset($data['table.odd.background'])){return $data['table.odd.background'];}
+			return $data['table.background'];
+		};
 
 
 		$svg = '<g class="table">'.PHP_EOL;
 		$svg .= '<rect x="1" y="'.$data['graph.height'].'" width="'.($data['graph.legend.width']+$data['graph.width']).'" height="'.$data['table.height'].'" style="fill:#aaa;" />';
 		$top = $data['graph.height'];
 		foreach($data['table'] as $name=>&$row){
-			$bg = 'fff';
-			$svg .= '<rect width="'.($data['graph.legend.width']-1).'" height="'.($data['table.row.height']).'" x="1" y="'.($top).'" style="fill:#'.$bg.';" />'.PHP_EOL;
+			$svg .= '<rect width="'.($data['graph.legend.width']-1).'" height="'.($data['table.row.height']).'" x="1" y="'.($top).'" style="fill:#'.$data['table.background'].';" />'.PHP_EOL;
 			$svg .= '<text x="'.(2).'" y="'.($data['header.height']/2+(10/2/* font-size */)-2+$top).'" text-anchor="left" style="fill:#444;font-size:10px;">'.$name.'</text>'.PHP_EOL;			
 
 			$left = 1+$data['graph.legend.width'];foreach($row as $k=>$label){
+				$bg = $getBackground($k);
 				$svg .= '<rect width="'.$data['cell.width'].'" height="'.($data['table.row.height']).'" x="'.$left.'" y="'.($top).'" style="fill:#'.$bg.';" />'.PHP_EOL;
 				$svg .= '<text x="'.($left+$data['cell.width.half']).'" y="'.($data['header.height']/2+(10/2/* font-size */)-2+$top).'" text-anchor="middle" style="fill:#444;font-size:10px;">'.$label.'</text>'.PHP_EOL;
 				$left += $data['cell.width']+1;
