@@ -14,6 +14,7 @@
 		if(isset($data['graph.gradient.from']) && isset($data['graph.gradient.to'])){$data['graph.gradient'] = graph_gradient($data['graph.gradient.from'],$data['graph.gradient.to'],$data['items.count']);}
 		if(!isset($data['graph.gradient'])){$data['graph.gradient'] = array_fill(0,$data['items.count'],'f00');}
 		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
+		if(!isset($data['table.id'])){$data['table.id'] = 'svgTableGraph';}
 		/* INI-Graph-colors */
 		for($i = 0;$i < $data['items.count'];$i++){
 			if(!isset($data['graph.colors'][$i])){
@@ -52,7 +53,7 @@
 			return isset($keys[$index+1]) ? $arr[$keys[$index+1]] : false;
 		};
 
-		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.($data['graph.height']).'">'.PHP_EOL.
+		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.($data['graph.height']).'" id="'.($data['table.id']).'">'.PHP_EOL.
 		'<rect width="100%" height="100%" style="fill:#aaa;" />'.PHP_EOL;
 
 		$svg .= '<g class="graph">'.PHP_EOL;
@@ -63,19 +64,21 @@
 			$svg .= graph_fragment_legend($data);
 		}
 		$i = -1;foreach($data['graph'] as $name=>&$row){$i++;
-			$left = 1+$data['graph.legend.width']+$data['cell.width.half'];
-			$j = -1;foreach($row as $k=>&$v){$j++;
-				if(!is_array($v) && ($v = floatval($v)) ){
-					$h = $getHeight($v);
-					$t = $getTop($v);
-					$n = $getArrayNext($row,$k);
-					if($n !== false){
-						$t2 = $getTop($n);
-						$svg .= '<line x1="'.$left.'" y1="'.$t.'" x2="'.($left+$data['cell.width']+1).'" y2="'.$t2.'" style="fill:#fff;stroke:#'.$data['graph.colors'][$i][$j].';stroke-width:2;" />';
+			if( !in_array( $name, $data['graph.onlyLegend'] ) ) {
+				$left = 1+$data['graph.legend.width']+$data['cell.width.half'];
+				$j = -1;foreach($row as $k=>&$v){$j++;
+					if(!is_array($v) && ($v = floatval($v)) ){
+						$h = $getHeight($v);
+						$t = $getTop($v);
+						$n = $getArrayNext($row,$k);
+						if($n !== false){
+							$t2 = $getTop($n);
+							$svg .= '<line x1="'.$left.'" y1="'.$t.'" x2="'.($left+$data['cell.width']+1).'" y2="'.$t2.'" style="fill:#fff;stroke:#'.$data['graph.colors'][$i][$j].';stroke-width:2;" />';
+						}
+						$svg .= '<circle cx="'.$left.'" cy="'.$t.'" r="4" style="fill:#fff;stroke:#'.$data['graph.colors'][$i][$j].';stroke-width:2;" rowName='.$name.' value='.$v.' class="svgLineGraphCircle '.$name.'svgLineGraphCircle" />';
 					}
-					$svg .= '<circle cx="'.$left.'" cy="'.$t.'" r="4" style="fill:#fff;stroke:#'.$data['graph.colors'][$i][$j].';stroke-width:2;" />';
+					$left += $data['cell.width']+1;
 				}
-				$left += $data['cell.width']+1;
 			}
 		}
 		$svg .= '</g>'.PHP_EOL;
@@ -114,7 +117,8 @@
 		if(isset($data['graph.gradient.from']) && isset($data['graph.gradient.to'])){$data['graph.gradient'] = graph_gradient($data['graph.gradient.from'],$data['graph.gradient.to'],$data['items.count']);}
 		if(!isset($data['graph.gradient'])){$data['graph.gradient'] = array_fill(0,$data['items.count'],'f00');}
 		if(!isset($data['graph.background'])){$data['graph.background'] = 'fff';}
-
+		if(!isset($data['table.id'])){$data['table.id'] = 'svgTableBar';}
+		
 		if(!isset($data['graph.min'])){
 			$data['graph.min'] = false;
 			foreach($data['graph'] as $name=>&$row){foreach($row as $k=>&$v){if($data['graph.min'] === false || $v < $data['graph.min']){$data['graph.min'] = $v;}}}
@@ -128,7 +132,7 @@
 		$getHeight = function($h) use (&$data){return ($h-$data['graph.min'])*$data['graph.incr'];};
 		$getTop = function($h) use (&$data){return $data['graph.height']-(($h-$data['graph.min'])*$data['graph.incr'])-1-$data['cell.marginy']-$data['bar.indicator'];};
 
-		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.($data['graph.height']).'">'.PHP_EOL.
+		$svg = '<svg width="'.($data['graph.width']+$data['graph.legend.width']).'" height="'.($data['graph.height']).'" id="'.($data['table.id']).'">'.PHP_EOL.
 		'<rect width="100%" height="100%" style="fill:#aaa;" />'.PHP_EOL;
 
 		$svg .= '<g class="graph">'.PHP_EOL;
@@ -144,7 +148,11 @@
 				if(!is_array($v) && ($v = floatval($v)) ){
 					$h = $getHeight($v);
 					$t = $getTop($v);
-					$svg .= '<rect width="'.($data['cell.width']-($data['cell.marginx']*2)).'" height="'.$h.'" x="'.$left.'" y="'.$t.'" style="fill:#'.$data['graph.gradient'][$i].';" rx="2" ry="2"/>'.PHP_EOL;
+					if($data['bar.indicator']){
+						$svg .= '<rect width="'.($data['cell.width']-($data['cell.marginx']*2)).'" height="'.$h.'" x="'.$left.'" y="'.$t.'" style="fill:#'.$data['graph.gradient'][$i].';" rx="2" ry="2" class="svgBarGraphBar svgBarGraphBarBottomArrow"/>'.PHP_EOL;
+					} else {
+						$svg .= '<rect width="'.($data['cell.width']-($data['cell.marginx']*2)).'" height="'.$h.'" x="'.$left.'" y="'.$t.'" style="fill:#'.$data['graph.gradient'][$i].';" rx="2" ry="2" class="svgBarGraphBar"/>'.PHP_EOL;
+					}
 					if($data['bar.indicator']){
 						$m = 4;
 						$svg .= '<path d="M'.($left+$m).' '.($t+$h).' l'.($data['cell.width.half']-$data['cell.marginx']-$m).' 6 l'.($data['cell.width.half']-$data['cell.marginx']-$m).' -6 Z" style="fill:#'.$data['graph.gradient'][$i].';" />'.PHP_EOL;
@@ -292,5 +300,4 @@
 		}
 		return $gradientColors;
 	}
-
 
